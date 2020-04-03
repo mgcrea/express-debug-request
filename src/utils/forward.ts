@@ -1,6 +1,6 @@
-import {WHITELIST_FORWARD} from 'src/config/env';
+import {Response} from 'express';
 import {IncomingHttpHeaders} from 'http';
-import {Response, Request, NextFunction, RequestHandler} from 'express';
+import {WHITELIST_FORWARD} from 'src/config/env';
 
 export const WHITELISTED_IPS = WHITELIST_FORWARD ? WHITELIST_FORWARD.split(',') : [];
 export const EXCLUDED_INCOMING_HEADERS = [

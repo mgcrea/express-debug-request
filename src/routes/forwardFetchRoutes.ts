@@ -5,12 +5,7 @@ import {FETCH_FORWARD_TIMEOUT} from 'src/config/env';
 import {asyncUtil} from 'src/utils/async';
 import {asNumber} from 'src/utils/cast';
 import {chalkJson, chalkNumber, chalkString} from 'src/utils/chalk';
-import {
-  EXCLUDED_OUTGOING_HEADERS,
-  WHITELISTED_IPS,
-  filterIncomingHeaders,
-  filterOutgoingHeaders
-} from 'src/utils/forward';
+import {WHITELISTED_IPS, filterIncomingHeaders, filterOutgoingHeaders} from 'src/utils/forward';
 import {debug, dir} from 'src/utils/log';
 
 export const forwardFetchRoutes: RequestHandler[] = [
