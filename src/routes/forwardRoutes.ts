@@ -41,7 +41,8 @@ export const forwardRoutes: RequestHandler[] = [
       return;
     }
 
-    const forwardProto = headers['x-forward-proto'] || protocol;
+    const forwardProto = (headers['x-forward-proto'] as string) || protocol;
+    const forwardMethod = (headers['x-forward-method'] as string) || method;
     const forwardQuery = new URLSearchParams(query).toString();
     const forwardHeaders = Object.keys(headers).reduce<Record<string, string>>((soFar, key) => {
       if (excludedIncomingHeaders.includes(key)) {
@@ -63,9 +64,10 @@ export const forwardRoutes: RequestHandler[] = [
     const timeout = setTimeout(controller.abort, asNumber(FETCH_FORWARD_TIMEOUT));
 
     try {
+      const withoutBody = ['GET', 'HEAD'].includes(forwardMethod);
       const forwarded = await fetch(`${finalUrl}`, {
-        method,
-        body: body,
+        method: forwardMethod,
+        body: withoutBody ? undefined : body,
         headers: forwardHeaders,
         signal: controller.signal
       });
