@@ -67,7 +67,7 @@ export const forwardRoutes: RequestHandler[] = [
       const withoutBody = ['GET', 'HEAD'].includes(forwardMethod);
       const forwarded = await fetch(`${finalUrl}`, {
         method: forwardMethod,
-        body: withoutBody ? undefined : body,
+        body: withoutBody ? undefined : JSON.stringify(body),
         headers: forwardHeaders,
         signal: controller.signal
       });
