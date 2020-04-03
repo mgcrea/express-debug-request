@@ -9,13 +9,11 @@ import {
   EXCLUDED_OUTGOING_HEADERS,
   WHITELISTED_IPS,
   filterIncomingHeaders,
-  filterOutgoingHeaders,
-  forwardResolver
+  filterOutgoingHeaders
 } from 'src/utils/forward';
 import {debug, dir} from 'src/utils/log';
 
 export const forwardFetchRoutes: RequestHandler[] = [
-  forwardResolver,
   asyncUtil(async (req, res) => {
     const {ip, method, protocol, path, query, headers, body} = req;
     dir({host: req.host, url: req.url, hostname: req.hostname, path: req.path});

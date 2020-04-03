@@ -34,24 +34,24 @@ export const filterOutgoingHeaders = (res: Response): void => {
   });
 };
 
-export const forwardResolver: RequestHandler = (req: Request, res: Response, next: NextFunction): void => {
-  const {path, route} = req;
-  const routePrefix = route.path.replace('*', '');
-  const routeRegex = new RegExp(`${routePrefix}/([^/\n]+)/(.*)`);
-  const matches = path.match(routeRegex);
-  if (!matches) {
-    res.status(500).end();
-    return;
-  }
-  const [, forwardedHost, forwardedPath] = matches;
-  try {
-    req.host = forwardedHost;
-    // req.hostname = forwardedHost;
-    // req.path = forwardedPath;
-    req.url = req.url.replace(path, forwardedPath);
-  } catch (err) {
-    dir({err});
-  }
+// export const forwardResolver: RequestHandler = (req: Request, res: Response, next: NextFunction): void => {
+//   const {path, route} = req;
+//   const routePrefix = route.path.replace('*', '');
+//   const routeRegex = new RegExp(`${routePrefix}/([^/\n]+)/(.*)`);
+//   const matches = path.match(routeRegex);
+//   if (!matches) {
+//     res.status(500).end();
+//     return;
+//   }
+//   const [, forwardedHost, forwardedPath] = matches;
+//   try {
+//     req.host = forwardedHost;
+//     // req.hostname = forwardedHost;
+//     // req.path = forwardedPath;
+//     req.url = req.url.replace(path, forwardedPath);
+//   } catch (err) {
+//     dir({err});
+//   }
 
-  next();
-};
+//   next();
+// };
