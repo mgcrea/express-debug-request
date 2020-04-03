@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`package should expose a stable interface 1`] = `
+Object {
+  "__esModule": true,
+  "default": [Function],
+  "faviconRoutes": Array [
+    [Function],
+  ],
+  "forwardRoutes": Array [
+    [Function],
+  ],
+  "uploadRoutes": Array [
+    [Function],
+    [Function],
+  ],
+}
+`;
