@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import {FETCH_FORWARD_TIMEOUT, WHITELIST_FORWARD} from 'src/config/env';
 import {asyncUtil} from 'src/utils/async';
 import {asNumber} from 'src/utils/cast';
-import {chalkJson, chalkString} from 'src/utils/chalk';
+import {chalkJson, chalkString, chalkNumber} from 'src/utils/chalk';
 import {debug, dir} from 'src/utils/log';
 
 // Forwarding endpoint
@@ -26,13 +26,13 @@ const excludedOutgoingHeaders = ['access-control-allow-origin', 'access-control-
 export const forwardRoutes: RequestHandler[] = [
   asyncUtil(async (req, res) => {
     const {ip, method, protocol, url, query, headers, body} = req;
-    const matches = url.match(/^\/forward\/([^/\n]+)/);
+    const matches = url.match(/^\/forward\/([^/\n]+)\/(.*)/);
     if (!matches) {
       res.status(500).end();
       return;
     }
-    const [, forwardedUrl] = matches;
-    if (!forwardedUrl) {
+    const [, forwardedHost, forwardedUrl] = matches;
+    if (!forwardedHost) {
       res.status(400).end();
       return;
     }
@@ -50,7 +50,9 @@ export const forwardRoutes: RequestHandler[] = [
       soFar[key] = headers[key] as string;
       return soFar;
     }, {});
-    const finalUrl = `${forwardProto}://${forwardedUrl}${forwardQuery ? `?${forwardQuery}` : ''}`;
+    const finalUrl = `${forwardProto}://${forwardedHost}${forwardedUrl ? `/${forwardedUrl}` : ''}${
+      forwardQuery ? `?${forwardQuery}` : ''
+    }`;
 
     debug(
       `► Forwarding request with method=${chalkString(method)} to url=${chalkString(finalUrl)}, headers=${chalkJson(
@@ -70,7 +72,7 @@ export const forwardRoutes: RequestHandler[] = [
       debug(
         `◄  Forwarded request with method=${chalkString(method)} to url=${chalkString(finalUrl)}, headers=${chalkJson(
           forwardHeaders
-        )}`
+        )}, status=${chalkNumber(forwarded.status)}, size=${chalkNumber(forwarded.size)}`
       );
 
       excludedOutgoingHeaders.forEach((key) => {
@@ -80,7 +82,9 @@ export const forwardRoutes: RequestHandler[] = [
         res.header(name, value);
       });
 
+      res.status(forwarded.status);
       const contentType = forwarded.headers.get('content-type') ?? '';
+
       if (contentType.includes('application/json')) {
         const cloned = forwarded.clone();
         try {

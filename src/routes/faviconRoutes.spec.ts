@@ -6,7 +6,7 @@ const app = express();
 
 app.all('/favicon.ico', ...faviconRoutes);
 
-describe('GET /user', () => {
-  it('responds with json', () =>
-    request(app).get('/user').set('Accept', 'application/json').expect('Content-Type', /json/).expect(200));
+describe('faviconRoutes', () => {
+  it('properly send a favicon', () =>
+    request(app).get('/favicon.ico').expect('Content-Type', 'image/x-icon').expect(200));
 });
