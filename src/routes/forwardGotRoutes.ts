@@ -11,7 +11,7 @@ export const forwardGotRoutes: RequestHandler[] = [
   asyncUtil(async (req, res) => {
     const {ip, method, protocol, path, query, headers, body} = req;
     const routePrefix = req.route.path.replace('*', '');
-    const routeRegex = new RegExp(`${routePrefix}/([^/\n]+)/(.*)`);
+    const routeRegex = new RegExp(`${routePrefix}/([^/\n]+)/?(.*)`);
     const matches = path.match(routeRegex);
     if (!matches) {
       res.status(500).end();
@@ -48,7 +48,8 @@ export const forwardGotRoutes: RequestHandler[] = [
         body: forwardedBody,
         headers: forwardHeaders,
         timeout: asNumber(FETCH_FORWARD_TIMEOUT),
-        throwHttpErrors: false
+        throwHttpErrors: false,
+        decompress: false
       });
       debug(
         `◄  Forwarded request with method=${chalkString(method)} to url=${chalkString(finalUrl)}, headers=${chalkJson(

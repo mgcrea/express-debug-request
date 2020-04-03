@@ -1,6 +1,6 @@
 {
   "name": "express-debug-request",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "Express dummy server to test requests",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -8,7 +8,7 @@
   "repository": "github:mgcrea/node-tydom-client",
   "license": "MIT",
   "scripts": {
-    "start": "DEBUG=express-debug-request FORWARD_ babel-node --extensions .js,.ts src/index.ts",
+    "start": "DEBUG=express-debug-request babel-node --extensions .js,.ts src/index.ts",
     "start:watch": "nodemon --ext \"ts,tsx\" --watch \"src/\" --exec \"yarn start\"",
     "test": "yarn pretty && yarn lint && yarn spec",
     "spec": "DEBUG=express-debug-request CI=true jest --runInBand --colors",

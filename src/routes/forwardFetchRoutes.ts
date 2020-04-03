@@ -11,9 +11,8 @@ import {debug, dir} from 'src/utils/log';
 export const forwardFetchRoutes: RequestHandler[] = [
   asyncUtil(async (req, res) => {
     const {ip, method, protocol, path, query, headers, body} = req;
-    dir({host: req.host, url: req.url, hostname: req.hostname, path: req.path});
     const routePrefix = req.route.path.replace('*', '');
-    const routeRegex = new RegExp(`${routePrefix}/([^/\n]+)/(.*)`);
+    const routeRegex = new RegExp(`${routePrefix}/([^/\n]+)/?(.*)`);
     const matches = path.match(routeRegex);
     if (!matches) {
       res.status(500).end();

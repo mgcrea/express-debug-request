@@ -14,6 +14,7 @@ export const EXCLUDED_INCOMING_HEADERS = [
   'x-forward-proto'
 ];
 export const EXCLUDED_OUTGOING_HEADERS = [
+  'connection',
   'content-length',
   'access-control-allow-origin',
   'access-control-allow-credentials'
