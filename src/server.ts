@@ -5,7 +5,8 @@ import {AddressInfo} from 'net';
 import {NODE_ENV, NODE_HOST, NODE_PORT} from 'src/config/env';
 import {dir, log} from 'src/utils/log';
 import {faviconRoutes} from './routes/faviconRoutes';
-import {forwardRoutes} from './routes/forwardRoutes';
+import {forwardFetchRoutes} from './routes/forwardFetchRoutes';
+import {forwardGotRoutes} from './routes/forwardGotRoutes';
 import {uploadRoutes} from './routes/uploadRoutes';
 import {asNumber} from './utils/cast';
 
@@ -33,7 +34,11 @@ app.enable('trust proxy');
 // Special routes
 app.all('/upload*', ...uploadRoutes);
 app.all('/favicon.ico', ...faviconRoutes);
-app.all('/forward*', ...forwardRoutes);
+app.all('/got*', ...forwardGotRoutes);
+app.all('/fetch*', ...forwardFetchRoutes);
+app.get(/\/status\/([1-5][0-9][0-9])/, (req, res) => {
+  res.status(asNumber(req.params[0])).send();
+});
 
 // Generic debug endpoint
 app.all('/*', (req, res) => {

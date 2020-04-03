@@ -7,7 +7,7 @@ describe('package', () => {
       '__esModule',
       'default',
       'faviconRoutes',
-      'forwardRoutes',
+      'forwardFetchRoutes',
       'uploadRoutes'
     ]);
   });
