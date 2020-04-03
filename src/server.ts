@@ -9,6 +9,7 @@ import {forwardFetchRoutes} from './routes/forwardFetchRoutes';
 import {forwardGotRoutes} from './routes/forwardGotRoutes';
 import {uploadRoutes} from './routes/uploadRoutes';
 import {asNumber} from './utils/cast';
+import {filterIncomingHeaders} from './utils/forward';
 
 const app = express();
 
@@ -43,7 +44,7 @@ app.get(/\/status\/([1-5][0-9][0-9])/, (req, res) => {
 // Generic debug endpoint
 app.all('/*', (req, res) => {
   const {ip, method, hostname, url, query, headers, body} = req;
-  const details = {ip, method, hostname, url, query, headers, body};
+  const details = {ip, method, hostname, url, query, headers: filterIncomingHeaders(headers), body};
   dir(details);
   res.json(details);
 });
