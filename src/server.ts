@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import express from 'express';
+import express, {ErrorRequestHandler} from 'express';
+import createError from 'http-errors';
 import {AddressInfo} from 'net';
 import {NODE_ENV, NODE_HOST, NODE_PORT} from 'src/config/env';
 import {dir, log} from 'src/utils/log';
@@ -32,22 +33,38 @@ app.set('json spaces', 2);
 // Enable remote IP through a proxy
 app.enable('trust proxy');
 
+// Default routes
+app.get('/favicon.ico', ...faviconRoutes);
+
 // Special routes
 app.all('/upload*', ...uploadRoutes);
-app.all('/favicon.ico', ...faviconRoutes);
 app.all('/got*', ...forwardGotRoutes);
 app.all('/fetch*', ...forwardFetchRoutes);
-app.get(/\/status\/([1-5][0-9][0-9])/, (req, res) => {
+app.all(/\/status\/([1-5][0-9][0-9])/, (req, res) => {
   res.status(asNumber(req.params[0])).send();
 });
 
 // Generic debug endpoint
-app.all('/*', (req, res) => {
+app.all('/*', (req, res, _next) => {
   const {ip, method, hostname, url, query, headers, body} = req;
   const details = {ip, method, hostname, url, query, headers: filterIncomingHeaders(headers), body};
   dir(details);
   res.json(details);
 });
+
+app.use((_req, _res, next) => {
+  next(createError(404));
+});
+
+app.use(((err, req, res, _next) => {
+  const {status = 500, message = 'Internal Error'} = err;
+  res.status(status);
+  if (req.accepts('json')) {
+    res.send({error: message});
+  } else {
+    res.type('txt').send(message);
+  }
+}) as ErrorRequestHandler);
 
 export default app;
 
