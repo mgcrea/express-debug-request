@@ -11,5 +11,5 @@ export const log = (...args: unknown[]) => {
 };
 
 export const dir = (...args: unknown[]) => {
-  console.dir(...args, {colors: true, depth: 10});
+  console.dir(args.length > 1 ? args : args, {colors: true, depth: 10});
 };

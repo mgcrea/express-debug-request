@@ -2,15 +2,18 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import express, {ErrorRequestHandler} from 'express';
 import createError from 'http-errors';
+import session from 'express-session';
 import {AddressInfo} from 'net';
-import {NODE_ENV, NODE_HOST, NODE_PORT} from 'src/config/env';
+import {NODE_ENV, NODE_HOST, NODE_PORT, IS_PRODUCTION, EXPRESS_SESSION_SECRET} from 'src/config/env';
 import {dir, log} from 'src/utils/log';
-import {faviconRoutes} from './routes/faviconRoutes';
+import {faviconRoutes, robotRoutes} from './routes/genericRoutes';
 import {forwardFetchRoutes} from './routes/forwardFetchRoutes';
 import {forwardGotRoutes} from './routes/forwardGotRoutes';
 import {uploadRoutes} from './routes/uploadRoutes';
 import {asNumber} from './utils/cast';
 import {filterIncomingHeaders} from './utils/forward';
+import {chalkNumber, chalkKeyword, chalkString} from './utils/chalk';
+import {statusRoutes} from './routes/statusRoutes';
 
 const app = express();
 
@@ -27,6 +30,16 @@ app.use(
   })
 );
 
+// Enable session support
+app.use(
+  session({
+    secret: EXPRESS_SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {secure: IS_PRODUCTION}
+  })
+);
+
 // Enable pretty JSON output
 app.set('json spaces', 2);
 
@@ -35,14 +48,13 @@ app.enable('trust proxy');
 
 // Default routes
 app.get('/favicon.ico', ...faviconRoutes);
+app.get('/robots.txt', ...robotRoutes);
 
 // Special routes
 app.all('/upload*', ...uploadRoutes);
 app.all('/got*', ...forwardGotRoutes);
 app.all('/fetch*', ...forwardFetchRoutes);
-app.all(/\/status\/([1-5][0-9][0-9])/, (req, res) => {
-  res.status(asNumber(req.params[0])).send();
-});
+app.all(/\/status\/([1-5][0-9][0-9])\/?([1-5][0-9][0-9])?/, ...statusRoutes);
 
 // Generic debug endpoint
 app.all('/*', (req, res, _next) => {
@@ -71,6 +83,10 @@ export default app;
 if (NODE_ENV !== 'test') {
   const server = app.listen(asNumber(NODE_PORT), NODE_HOST, () => {
     const address = server.address() as AddressInfo;
-    log('Express server listening on "%s:%d" in %s mode', address.address, address.port, NODE_ENV);
+    log(
+      `Express server listening on "${chalkString(address.address, true)}:${chalkNumber(
+        address.port
+      )}" in ${chalkKeyword(NODE_ENV)} mode ...`
+    );
   });
 }

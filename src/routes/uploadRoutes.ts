@@ -3,12 +3,13 @@ import multer from 'multer';
 import {MULTER_FILE_SIZE_LIMIT} from 'src/config/env';
 import {asNumber} from 'src/utils/cast';
 import {dir, log} from 'src/utils/log';
+import {chalkJson} from 'src/utils/chalk';
 
 // Upload endpoint
 const storage = multer.memoryStorage();
 const limits = {fileSize: asNumber(MULTER_FILE_SIZE_LIMIT)};
 const upload = multer({storage, limits});
-log('Multer handler configured with limits="%s"', JSON.stringify(limits));
+log(`Multer handler configured with limits="${chalkJson(limits)}"`);
 
 export const uploadRoutes: RequestHandler[] = [
   upload.single('file'),
