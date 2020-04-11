@@ -1,19 +1,20 @@
 import bodyParser from 'body-parser';
+import chalk from 'chalk';
 import cors from 'cors';
 import express, {ErrorRequestHandler} from 'express';
-import createError from 'http-errors';
 import session from 'express-session';
+import createError from 'http-errors';
 import {AddressInfo} from 'net';
-import {NODE_ENV, NODE_HOST, NODE_PORT, IS_PRODUCTION, EXPRESS_SESSION_SECRET} from 'src/config/env';
+import {EXPRESS_SESSION_SECRET, IS_PRODUCTION, NODE_ENV, NODE_HOST, NODE_PORT} from 'src/config/env';
 import {dir, log} from 'src/utils/log';
-import {faviconRoutes, robotRoutes} from './routes/genericRoutes';
 import {forwardFetchRoutes} from './routes/forwardFetchRoutes';
 import {forwardGotRoutes} from './routes/forwardGotRoutes';
+import {faviconRoutes, robotRoutes} from './routes/genericRoutes';
+import {statusRoutes} from './routes/statusRoutes';
 import {uploadRoutes} from './routes/uploadRoutes';
 import {asNumber} from './utils/cast';
+import {chalkKeyword, chalkNumber} from './utils/chalk';
 import {filterIncomingHeaders} from './utils/forward';
-import {chalkNumber, chalkKeyword, chalkString} from './utils/chalk';
-import {statusRoutes} from './routes/statusRoutes';
 
 const app = express();
 
@@ -84,7 +85,7 @@ if (NODE_ENV !== 'test') {
   const server = app.listen(asNumber(NODE_PORT), NODE_HOST, () => {
     const address = server.address() as AddressInfo;
     log(
-      `Express server listening on "${chalkString(address.address, true)}:${chalkNumber(
+      `Express server listening on "${chalk.green(address.address, true)}:${chalkNumber(
         address.port
       )}" in ${chalkKeyword(NODE_ENV)} mode ...`
     );
