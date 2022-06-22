@@ -32,7 +32,7 @@
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
-    "got": "^10.7.0",
+    "got": "^11.8.5",
     "http-errors": "^1.7.3",
     "multer": "^1.4.2",
     "node-fetch": "^2.6.0",
